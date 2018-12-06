@@ -4,9 +4,9 @@ const INITIAL_STATE = {
     text: ''
 }
 
-export const typeText = text => ({
+export const inputText = newTextValue => ({
     type: INPUT_TEXT,
-    text
+    newTextValue
 })
 
 export default (state = INITIAL_STATE, action) => {
@@ -14,7 +14,7 @@ export default (state = INITIAL_STATE, action) => {
         case INPUT_TEXT:
             return {
                 ...state,
-                text: action.text
+                newTextValue: action.newTextValue
             }
         default:
             return state
