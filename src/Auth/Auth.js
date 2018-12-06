@@ -5,78 +5,83 @@ import { auth, googleProvider } from '../firebaseConfig'
 
 import Forms from './Forms'
 
+import { connect } from 'react-redux'
+
+import { initAuthChangeListeningAction } from '../state/auth'
+
 class Auth extends React.Component {
-  state = {
-    email: '',
-    password: '',
-    isUserLoggedIn: false
-  }
+    state = {
+        email: '',
+        password: '',
+    }
 
-  componentDidMount() {
-    auth.onAuthStateChanged(
-      // user is an obj with users data or null when not logged in
-      user => {
-        if (user) {
-          this.setState({ isUserLoggedIn: true })
-        } else {
-          this.setState({ isUserLoggedIn: false })
-        }
-      }
-    )
-  }
+    componentDidMount() {
+        this.props._initAuthChangeListeningAction()
+    }
 
-  onEmailChangeHandler = event => {
-    this.setState({ email: event.target.value })
-  }
-  onPasswordChangeHandler = event => {
-    this.setState({ password: event.target.value })
-  }
+    onEmailChangeHandler = event => {
+        this.setState({ email: event.target.value })
+    }
+    onPasswordChangeHandler = event => {
+        this.setState({ password: event.target.value })
+    }
 
-  onLogInClick = () => {
-    auth.signInWithEmailAndPassword(this.state.email, this.state.password)
-      .catch(error => {
-        alert('Something is wrong! Check console for error details!')
-        console.log(error)
-      })
-  }
+    onLogInClick = () => {
+        auth.signInWithEmailAndPassword(this.state.email, this.state.password)
+            .catch(error => {
+                alert('Something is wrong! Check console for error details!')
+                console.log(error)
+            })
+    }
 
-  onLogInByGoogleClick = () => {
-    auth.signInWithPopup(googleProvider)
-  }
+    onLogInByGoogleClick = () => {
+        auth.signInWithPopup(googleProvider)
+    }
 
-  onLogOutClickHandler = () => {
-    auth.signOut()
-  }
+    onLogOutClickHandler = () => {
+        auth.signOut()
+    }
 
-  render() {
-    return (
-      this.state.isUserLoggedIn ?
-        <div>
-          <FloatingActionButton
-            style={{
-              position: 'fixed',
-              top: 10,
-              right: 10,
-              zIndex: 9999,
-              color: 'white'
-            }}
-            secondary={true}
-            onClick={this.onLogOutClickHandler}
-          >
-            X
+    render() {
+        return (
+            this.props._isUserLoggedIn ?
+                <div>
+                    <FloatingActionButton
+                        style={{
+                            position: 'fixed',
+                            top: 10,
+                            right: 10,
+                            zIndex: 9999,
+                            color: 'white'
+                        }}
+                        secondary={true}
+                        onClick={this.onLogOutClickHandler}
+                    >
+                        X
           </FloatingActionButton>
-          {this.props.children}
-        </div>
-        :
-        <Forms
-          email={this.state.email}
-          onEmailChangeHandler={this.onEmailChangeHandler}
-          password={this.state.password}
-          onPasswordChangeHandler={this.onPasswordChangeHandler}
-          onLogInClick={this.onLogInClick}
-          onLogInByGoogleClick={this.onLogInByGoogleClick}
-        />
-    )
-  }
+                    {this.props.children}
+                </div>
+                :
+                <Forms
+                    email={this.state.email}
+                    onEmailChangeHandler={this.onEmailChangeHandler}
+                    password={this.state.password}
+                    onPasswordChangeHandler={this.onPasswordChangeHandler}
+                    onLogInClick={this.onLogInClick}
+                    onLogInByGoogleClick={this.onLogInByGoogleClick}
+                />
+        )
+    }
 }
-export default Auth
+
+const mapStateToProps = state => ({
+_isUserLoggedIn: state.auth.isUserLoggedIn
+})
+
+const mapDispatchToProps = dispatch => ({
+    _initAuthChangeListeningAction: () => dispatch(initAuthChangeListeningAction())
+})
+
+export default connect(
+    mapStateToProps, mapDispatchToProps
+)(Auth)
