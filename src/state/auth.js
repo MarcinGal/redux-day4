@@ -1,5 +1,4 @@
-import { auth } from '../firebaseConfig'
-import { googleProvider } from '../firebaseConfig'
+import { auth, database, googleProvider } from '../firebaseConfig'
 
 const LOG_IN = 'auth/LOG_IN'
 const LOG_OUT = 'auth/LOG_OUT'
@@ -10,7 +9,8 @@ export const initAuthChangeListeningAsyncAction = () => (dispatch, getState) => 
     auth.onAuthStateChanged(
         user => {
             if (user) {
-                dispatch(logInAction())
+                dispatch(logInAction(user))
+                dispatch(saveLoginTimestampAsyncAction())
             } else {
                 dispatch(logOutAction())
             }
@@ -36,7 +36,16 @@ export const logInAsyncAction = () => (dispatch, getState) => {
         })
 }
 
-const logInAction = () => ({ type: LOG_IN })
+const saveLoginTimestampAsyncAction = () => (dispatch, getState) => {
+    database.ref('apka/loginsLog').push({
+        timestamp: Date.now()
+    })
+}
+
+const logInAction = user => ({
+    type: LOG_IN,
+    user
+})
 const logOutAction = () => ({ type: LOG_OUT })
 
 export const emailChangeAction = newValue => ({
@@ -60,12 +69,14 @@ export default (state = INITIAL_STATE, action) => {
         case LOG_IN:
             return {
                 ...state,
-                isUserLoggedIn: true
+                isUserLoggedIn: true,
+                user: action.user
             }
         case LOG_OUT:
             return {
                 ...state,
-                isUserLoggedIn: false
+                isUserLoggedIn: false,
+                user: null
             }
         case EMAIL_CHANGE:
             return {
