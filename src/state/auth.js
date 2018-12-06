@@ -1,10 +1,10 @@
 import { auth } from '../firebaseConfig'
-
+import { googleProvider } from '../firebaseConfig'
 
 const LOG_IN = 'auth/LOG_IN'
 const LOG_OUT = 'auth/LOG_OUT'
 
-export const initAuthChangeListeningAction = () => (dispatch, getState) => {
+export const initAuthChangeListeningAsyncAction = () => (dispatch, getState) => {
     auth.onAuthStateChanged(
         user => {
             if (user) {
@@ -18,6 +18,18 @@ export const initAuthChangeListeningAction = () => (dispatch, getState) => {
 
 export const logOutAsyncAction = () => (dispatch, getState) => {
     auth.signOut()
+}
+
+export const logInByGoogleAsyncAction = () => (dispatch, getState) => {
+    auth.signInWithPopup(googleProvider)
+}
+
+export const logInAsyncAction = (email, password) => (dispatch, getState) => {
+    auth.signInWithEmailAndPassword(email, password)
+            .catch(error => {
+                alert('Something is wrong! Check console for error details!')
+                console.log(error)
+            })
 }
 
 const logInAction = () => ({ type: LOG_IN })

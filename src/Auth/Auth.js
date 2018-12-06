@@ -1,25 +1,24 @@
 import React from 'react'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 
-import { auth, googleProvider } from '../firebaseConfig'
-
 import Forms from './Forms'
 
 import { connect } from 'react-redux'
-
 import {
-    initAuthChangeListeningAction,
-    logOutAsyncAction
+    initAuthChangeListeningAsyncAction,
+    logOutAsyncAction,
+    logInByGoogleAsyncAction,
+    logInAsyncAction
 } from '../state/auth'
 
 class Auth extends React.Component {
     state = {
         email: '',
-        password: '',
+        password: ''
     }
 
     componentDidMount() {
-        this.props._initAuthChangeListeningAction()
+        this.props._initAuthChangeListeningAsyncAction()
     }
 
     onEmailChangeHandler = event => {
@@ -27,18 +26,6 @@ class Auth extends React.Component {
     }
     onPasswordChangeHandler = event => {
         this.setState({ password: event.target.value })
-    }
-
-    onLogInClick = () => {
-        auth.signInWithEmailAndPassword(this.state.email, this.state.password)
-            .catch(error => {
-                alert('Something is wrong! Check console for error details!')
-                console.log(error)
-            })
-    }
-
-    onLogInByGoogleClick = () => {
-        auth.signInWithPopup(googleProvider)
     }
 
     render() {
@@ -54,7 +41,7 @@ class Auth extends React.Component {
                             color: 'white'
                         }}
                         secondary={true}
-                        onClick={this._logOutAsyncAction}
+                        onClick={this.props._logOutAsyncAction}
                     >
                         X
           </FloatingActionButton>
@@ -66,8 +53,8 @@ class Auth extends React.Component {
                     onEmailChangeHandler={this.onEmailChangeHandler}
                     password={this.state.password}
                     onPasswordChangeHandler={this.onPasswordChangeHandler}
-                    onLogInClick={this.onLogInClick}
-                    onLogInByGoogleClick={this.onLogInByGoogleClick}
+                    onLogInClick={() => this.props._logInAsyncAction(this.state.email, this.state.password)}
+                    onLogInByGoogleClick={this._logInByGoogleAsyncAction}
                 />
         )
     }
@@ -78,8 +65,10 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    _initAuthChangeListeningAction: () => dispatch(initAuthChangeListeningAction()),
-    _logOutAsyncAction: () => dispatch(logOutAsyncAction())
+    _initAuthChangeListeningAsyncAction: () => dispatch(initAuthChangeListeningAsyncAction()),
+    _logOutAsyncAction: () => dispatch(logOutAsyncAction()),
+    _logInByGoogleAsyncAction: () => dispatch(logInByGoogleAsyncAction()),
+    _logInAsyncAction: (email, password) => dispatch(logInAsyncAction(email, password))
 })
 
 export default connect(
