@@ -26,7 +26,9 @@ export const logInByGoogleAsyncAction = () => (dispatch, getState) => {
     auth.signInWithPopup(googleProvider)
 }
 
-export const logInAsyncAction = (email, password) => (dispatch, getState) => {
+export const logInAsyncAction = () => (dispatch, getState) => {
+    const { auth: {email, password} } = getState()
+
     auth.signInWithEmailAndPassword(email, password)
         .catch(error => {
             alert('Something is wrong! Check console for error details!')
@@ -37,19 +39,19 @@ export const logInAsyncAction = (email, password) => (dispatch, getState) => {
 const logInAction = () => ({ type: LOG_IN })
 const logOutAction = () => ({ type: LOG_OUT })
 
-export const EmailChangeAction = value => ({
+export const emailChangeAction = newValue => ({
     type: EMAIL_CHANGE,
-    value
+    newValue
 })
-export const PasswordChangeAction = value => ({
+export const passwordChangeAction = newValue => ({
     type: PASSWORD_CHANGE,
-    value
+    newValue
 })
 
 const INITIAL_STATE = {
     isUserLoggedIn: false,
-    email: 'placki',
-    password: 'placki'
+    email: '',
+    password: ''
 }
 
 
@@ -64,6 +66,16 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 isUserLoggedIn: false
+            }
+        case EMAIL_CHANGE:
+            return {
+                ...state,
+                email: action.newValue
+            }
+        case PASSWORD_CHANGE:
+            return {
+                ...state,
+                password: action.newValue
             }
         default:
             return state
