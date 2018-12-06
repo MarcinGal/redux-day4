@@ -21,13 +21,6 @@ class Auth extends React.Component {
         this.props._initAuthChangeListeningAsyncAction()
     }
 
-    onEmailChangeHandler = event => {
-        this.setState({ email: event.target.value })
-    }
-    onPasswordChangeHandler = event => {
-        this.setState({ password: event.target.value })
-    }
-
     render() {
         return (
             this.props._isUserLoggedIn ?
@@ -49,19 +42,21 @@ class Auth extends React.Component {
                 </div>
                 :
                 <Forms
-                    email={this.state.email}
+                    email={this.props._email}
                     onEmailChangeHandler={this.onEmailChangeHandler}
-                    password={this.state.password}
+                    password={this.props._password}
                     onPasswordChangeHandler={this.onPasswordChangeHandler}
-                    onLogInClick={() => this.props._logInAsyncAction(this.state.email, this.state.password)}
-                    onLogInByGoogleClick={this._logInByGoogleAsyncAction}
+                    onLogInClick={() => this.props._logInAsyncAction(this.state.auth.email, this.state.password)}
+                    onLogInByGoogleClick={this.props._logInByGoogleAsyncAction}
                 />
         )
     }
 }
 
 const mapStateToProps = state => ({
-    _isUserLoggedIn: state.auth.isUserLoggedIn
+    _isUserLoggedIn: state.auth.isUserLoggedIn,
+    _email: state.auth.email,
+    _password: state.auth.password
 })
 
 const mapDispatchToProps = dispatch => ({

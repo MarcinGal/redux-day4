@@ -3,6 +3,8 @@ import { googleProvider } from '../firebaseConfig'
 
 const LOG_IN = 'auth/LOG_IN'
 const LOG_OUT = 'auth/LOG_OUT'
+const EMAIL_CHANGE = 'AUTH/EMAIL_CHANGE'
+const PASSWORD_CHANGE = 'AUTH/PASSWORD_CHANGE'
 
 export const initAuthChangeListeningAsyncAction = () => (dispatch, getState) => {
     auth.onAuthStateChanged(
@@ -26,17 +28,28 @@ export const logInByGoogleAsyncAction = () => (dispatch, getState) => {
 
 export const logInAsyncAction = (email, password) => (dispatch, getState) => {
     auth.signInWithEmailAndPassword(email, password)
-            .catch(error => {
-                alert('Something is wrong! Check console for error details!')
-                console.log(error)
-            })
+        .catch(error => {
+            alert('Something is wrong! Check console for error details!')
+            console.log(error)
+        })
 }
 
 const logInAction = () => ({ type: LOG_IN })
 const logOutAction = () => ({ type: LOG_OUT })
 
+export const EmailChangeAction = value => ({
+    type: EMAIL_CHANGE,
+    value
+})
+export const PasswordChangeAction = value => ({
+    type: PASSWORD_CHANGE,
+    value
+})
+
 const INITIAL_STATE = {
-    isUserLoggedIn: false
+    isUserLoggedIn: false,
+    email: 'placki',
+    password: 'placki'
 }
 
 
