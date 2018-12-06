@@ -16,6 +16,10 @@ export const initAuthChangeListeningAction = () => (dispatch, getState) => {
     )
 }
 
+export const logOutAsyncAction = () => (dispatch, getState) => {
+    auth.signOut()
+}
+
 const logInAction = () => ({ type: LOG_IN })
 const logOutAction = () => ({ type: LOG_OUT })
 

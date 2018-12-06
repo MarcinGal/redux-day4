@@ -7,7 +7,10 @@ import Forms from './Forms'
 
 import { connect } from 'react-redux'
 
-import { initAuthChangeListeningAction } from '../state/auth'
+import {
+    initAuthChangeListeningAction,
+    logOutAsyncAction
+} from '../state/auth'
 
 class Auth extends React.Component {
     state = {
@@ -38,10 +41,6 @@ class Auth extends React.Component {
         auth.signInWithPopup(googleProvider)
     }
 
-    onLogOutClickHandler = () => {
-        auth.signOut()
-    }
-
     render() {
         return (
             this.props._isUserLoggedIn ?
@@ -55,7 +54,7 @@ class Auth extends React.Component {
                             color: 'white'
                         }}
                         secondary={true}
-                        onClick={this.onLogOutClickHandler}
+                        onClick={this._logOutAsyncAction}
                     >
                         X
           </FloatingActionButton>
@@ -75,13 +74,15 @@ class Auth extends React.Component {
 }
 
 const mapStateToProps = state => ({
-_isUserLoggedIn: state.auth.isUserLoggedIn
+    _isUserLoggedIn: state.auth.isUserLoggedIn
 })
 
 const mapDispatchToProps = dispatch => ({
-    _initAuthChangeListeningAction: () => dispatch(initAuthChangeListeningAction())
+    _initAuthChangeListeningAction: () => dispatch(initAuthChangeListeningAction()),
+    _logOutAsyncAction: () => dispatch(logOutAsyncAction())
 })
 
 export default connect(
-    mapStateToProps, mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(Auth)
